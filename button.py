@@ -39,7 +39,7 @@ class Button:
             elif self.name == 'Reset':
                 self.reset_ships(game.pFleet, game.deployment)
             elif self.name == 'Deploy':
-                self.deployment_phase()
+                self.deployment_phase(game.deployment)
             elif self.name == 'Quit':
                 pass
             elif self.name == 'Redeploy':
@@ -58,8 +58,11 @@ class Button:
                 ship.return_to_default_position()
 
 
-    def deployment_phase(self):
-        pass
+    def deployment_phase(self, deployment):
+        flag = True
+        if deployment:
+            flag = False
+        return flag
 
 
     def restart_the_game(self, game):

@@ -55,6 +55,8 @@ def updateGameScreen(window, game):
     game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid)
     game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
     game.show_button_onscreen(GAMESCREEN, game.button)
+    game.update_pgame_logic(game.pGameGrid, game.pFleet)
+    game.update_cgame_logic(game.cGameGrid, game.cFleet)
 
     pygame.display.update()
 

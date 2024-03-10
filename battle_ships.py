@@ -1,7 +1,8 @@
 from service import increase_animation_image
+from abc import ABC,abstractmethod
 
 
-class BattleShips:
+class BattleShips(ABC):
     pGameGrid = []
     pGameLogic = []
     cGameGrid = []

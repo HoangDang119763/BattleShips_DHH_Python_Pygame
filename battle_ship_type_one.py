@@ -27,13 +27,10 @@ class BattleShips_TypeOne(BattleShips):
             self.tokens = []
             self.status = True
         else:
-            self.numRows = 10
-            self.numColums = 10
-            cellSizeY = (SCREENHEIGHT // 2) // self.numRows
-            cellSizeX = (SCREENWIDTH // 2) // self.numColums
-            self.cellSize = cellSizeY
+            cellSizeY = (SCREENHEIGHT // 2) // 10
+            cellSizeX = (SCREENWIDTH // 2) // 10
             self.cellSize1 = cellSizeX
-            self.pos = (cellSizeX, cellSizeX)
+            super().__init__(10, 10, cellSizeY, (cellSizeX, cellSizeX))
             self.deployment = True
             self.scanner = False
             self.indnum = 0
@@ -135,14 +132,14 @@ class BattleShips_TypeOne(BattleShips):
                           (SCREENWIDTH // 2 - self.cellSize1 * 2, self.cellSize1), (30, self.cellSize * 3 - 5),
                           2, 'assets/images/ships/destroyer/destroyergun.png', (0.5, 0.15), [-0.52, 0.71]],
             'patrol boat': ['patrol boat', 'assets/images/ships/patrol boat/patrol boat.png',
-                            (SCREENWIDTH // 2 - self.cellSize1 * 3, self.cellSize1), (20, self.cellSize * 2 - 5),
+                            (SCREENWIDTH // 2 - self.cellSize1 * 3, self.cellSize1), (25, self.cellSize * 2 - 5),
                             0, '', None, None],
             'submarine': ['submarine', 'assets/images/ships/submarine/submarine.png',
                           (SCREENWIDTH // 2 + self.cellSize1 * 2, self.cellSize1), (30, 145),
                           1, 'assets/images/ships/submarine/submarinegun.png', (0.25, 0.125), [-0.45]],
             'carrier': ['carrier', 'assets/images/ships/carrier/carrier.png',
                         (SCREENWIDTH // 2 + self.cellSize1, self.cellSize1),
-                        (35, self.cellSize * 5 - 5),
+                        (30, self.cellSize * 4),
                         0, '', None, None],
             'rescue ship': ['rescue ship', 'assets/images/ships/rescue ship/rescue ship.png',
                             (SCREENWIDTH // 2 + self.cellSize1 * 3, self.cellSize1), (25, self.cellSize * 2 - 5),
@@ -259,12 +256,6 @@ class BattleShips_TypeOne(BattleShips):
                     validPosition = True
             placedShips.append(ship)
 
-    def delployment_phase(self, deployment):
-        if deployment:
-            return False
-        else:
-            return True
-
     def pick_random_ship_location(self, gameLogic):
         validChoice = False
         posX = None
@@ -283,20 +274,4 @@ class BattleShips_TypeOne(BattleShips):
             flag = False
         return flag
 
-    # def start(self, window):
-    #     """"""
-    #
-    #     for ship in self.pFleet:
-    #         ship.draw(GAMESCREEN)
-    #         ship.snap_to_grid_edge(self.pGameGrid)
-    #         ship.snap_to_grid(self.pGameGrid, self.cellSize)
-    #
-    #     for ship in self.cFleet:
-    #         ship.draw(GAMESCREEN)
-    #         ship.snap_to_grid_edge(self.cGameGrid)
-    #         ship.snap_to_grid(self.cGameGrid, self.cellSize)
-    #
-    #     for button in self.button:
-    #         button.draw(GAMESCREEN)
-    #     #pygame.display.update()
-    #     """"""
+
