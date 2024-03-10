@@ -2,7 +2,8 @@ import random
 
 from battle_ships import BattleShips
 from ship import Ship
-from service import SCREENWIDTH, SCREENHEIGHT, load_image, load_animation_images, load_sprite_sheet_images , GAMESCREEN, increase_animation_image
+from service import SCREENWIDTH, SCREENHEIGHT, load_image, load_animation_images, load_sprite_sheet_images, \
+    increase_animation_image
 from button import Button
 import pygame
 
@@ -13,6 +14,7 @@ class BattleShips_TypeOne(BattleShips):
             super().__init__(numrows, numcolumns, cellsize, pos)
             cellSizeY = (SCREENHEIGHT // 2) // self.numRows
             cellSizeX = (SCREENWIDTH // 2) // self.numColums
+            self.cellSize = cellSizeY
             self.cellSize1 = cellSizeX
             self.pos = (cellSizeX, cellSizeX)
             self.deployment = True
@@ -41,7 +43,6 @@ class BattleShips_TypeOne(BattleShips):
             self.button = []
             self.tokens = []
             self.status = True
-            
 
     def create_grid(self):
         startx = self.pos[0]
@@ -102,12 +103,6 @@ class BattleShips_TypeOne(BattleShips):
                         if pygame.rect.Rect(colX[0], colX[1], self.cellSize, self.cellSize).colliderect(ship.rect):
                             self.cGameLogic[i][j] = 'O'
 
-    # def update_shiplist(self, fleet):
-    #     for ship in fleet:
-    #         ship.draw(window)
-    #         ship.snap_to_grid_edge(gamegrid)
-    #         ship.snap_to_grid(gamegrid, self.cellSize)
-
     def show_grid_onscreen(self, window):
         gamegrid = [self.pGameGrid, self.cGameGrid]
         for grid in gamegrid:
@@ -121,6 +116,10 @@ class BattleShips_TypeOne(BattleShips):
             ship.snap_to_grid_edge(gamegrid)
             ship.snap_to_grid(gamegrid, self.cellSize)
 
+    def show_button_onscreen(self, window, button):
+        for buttonx in button:
+            buttonx.draw(window, self.deployment)
+
     def create_fleet(self):
         FLEET = {
             'battleship': ['battleship', 'assets/images/ships/battleship/battleship.png',
@@ -128,7 +127,8 @@ class BattleShips_TypeOne(BattleShips):
                            (30, self.cellSize * 4 - 5),
                            4, 'assets/images/ships/battleship/battleshipgun.png', (0.4, 0.125),
                            [-0.525, -0.34, 0.67, 0.49]],
-            'cruiser': ['cruiser', 'assets/images/ships/cruiser/cruiser.png', (SCREENWIDTH // 2 - self.cellSize1, self.cellSize1),
+            'cruiser': ['cruiser', 'assets/images/ships/cruiser/cruiser.png',
+                        (SCREENWIDTH // 2 - self.cellSize1, self.cellSize1),
                         (30, self.cellSize * 5 - 5),
                         2, 'assets/images/ships/cruiser/cruisergun.png', (0.4, 0.125), [-0.36, 0.64]],
             'destroyer': ['destroyer', 'assets/images/ships/destroyer/destroyer.png',
@@ -140,7 +140,8 @@ class BattleShips_TypeOne(BattleShips):
             'submarine': ['submarine', 'assets/images/ships/submarine/submarine.png',
                           (SCREENWIDTH // 2 + self.cellSize1 * 2, self.cellSize1), (30, 145),
                           1, 'assets/images/ships/submarine/submarinegun.png', (0.25, 0.125), [-0.45]],
-            'carrier': ['carrier', 'assets/images/ships/carrier/carrier.png', (SCREENWIDTH // 2 + self.cellSize1, self.cellSize1),
+            'carrier': ['carrier', 'assets/images/ships/carrier/carrier.png',
+                        (SCREENWIDTH // 2 + self.cellSize1, self.cellSize1),
                         (35, self.cellSize * 5 - 5),
                         0, '', None, None],
             'rescue ship': ['rescue ship', 'assets/images/ships/rescue ship/rescue ship.png',
@@ -186,22 +187,27 @@ class BattleShips_TypeOne(BattleShips):
         MAINMENUIMAGE = load_image('assets/images/background/Battleship.jpg', (SCREENWIDTH // 3 * 2, SCREENHEIGHT))
         ENDSCREENIMAGE = load_image('assets/images/background/Carrier.jpg', (SCREENWIDTH, SCREENHEIGHT))
         BACKGROUND = load_image('assets/images/background/gamebg.png', (SCREENWIDTH, SCREENHEIGHT))
-        PGAMEGRIDIMG = load_image('assets/images/grids/player_grid.png', ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
-        CGAMEGRIDIMG = load_image('assets/images/grids/comp_grid.png', ((self.numRows  + 1) * self.cellSize, (self.numColums  + 1) * self.cellSize))
+        PGAMEGRIDIMG = load_image('assets/images/grids/player_grid.png',
+                                  ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
+        CGAMEGRIDIMG = load_image('assets/images/grids/comp_grid.png',
+                                  ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
         REDTOKEN = load_image('assets/images/tokens/redtoken.png', (self.cellSize1, self.cellSize1))
         GREENTOKEN = load_image('assets/images/tokens/greentoken.png', (self.cellSize1, self.cellSize1))
         BLUETOKEN = load_image('assets/images/tokens/bluetoken.png', (self.cellSize1, self.cellSize1))
-        FIRETOKENIMAGELIST = load_animation_images('assets/images/tokens/fireloop/fire1_ ', 13, (self.cellSize1, self.cellSize1))
+        FIRETOKENIMAGELIST = load_animation_images('assets/images/tokens/fireloop/fire1_ ', 13,
+                                                   (self.cellSize1, self.cellSize1))
         EXPLOSIONSPRITESHEET = pygame.image.load('assets/images/tokens/explosion/explosion.png').convert_alpha()
         EXPLOSIONIMAGELIST = []
         for row in range(8):
             for col in range(8):
                 EXPLOSIONIMAGELIST.append(
-                    load_sprite_sheet_images(EXPLOSIONSPRITESHEET, col, row, (self.cellSize, self.cellSize), (128, 128)))
+                    load_sprite_sheet_images(EXPLOSIONSPRITESHEET, col, row, (self.cellSize, self.cellSize),
+                                             (128, 128)))
         RADARGRIDIMAGES = load_animation_images('assets/images/radar_base/radar_anim', 360,
-                                                (self.numRows  * self.cellSize, self.numColums  * self.cellSize))
+                                                (self.numRows * self.cellSize, self.numColums * self.cellSize))
         RADARBLIPIMAGES = load_animation_images('assets/images/radar_blip/Blip_', 11, (50, 50))
-        RADARGRID = load_image('assets/images/grids/grid_faint.png', ((self.numRows) * self.cellSize, (self.numColums ) * self.cellSize))
+        RADARGRID = load_image('assets/images/grids/grid_faint.png',
+                               ((self.numRows) * self.cellSize, (self.numColums) * self.cellSize))
         HITSOUND = pygame.mixer.Sound('assets/sounds/explosion.wav')
         HITSOUND.set_volume(0.05)
         SHOTSOUND = pygame.mixer.Sound('assets/sounds/gunshot.wav')
@@ -225,14 +231,14 @@ class BattleShips_TypeOne(BattleShips):
             return image
         else:
             return False
-    
+
     def randomize_ship_positions(self, shipList, gameGrid):
         placedShips = []
         for i, ship in enumerate(shipList):
             validPosition = False
             while not validPosition:
                 ship.return_to_default_position()
-                rotateShip = random.randint(0,1)
+                rotateShip = random.randint(0, 1)
                 if rotateShip:
                     yAxis = random.randint(0, 9)
                     xAxis = random.randint(0, 9 - (ship.hImage.get_width() // self.cellSize))
@@ -277,7 +283,6 @@ class BattleShips_TypeOne(BattleShips):
             flag = False
         return flag
 
-
     # def start(self, window):
     #     """"""
     #
@@ -295,4 +300,3 @@ class BattleShips_TypeOne(BattleShips):
     #         button.draw(GAMESCREEN)
     #     #pygame.display.update()
     #     """"""
-

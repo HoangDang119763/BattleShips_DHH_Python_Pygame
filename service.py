@@ -53,7 +53,8 @@ def updateGameScreen(window, game):
     GAMESCREEN.blit(bg, (0, 0))
     game.show_grid_onscreen(GAMESCREEN)
     game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid)
-
+    game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
+    game.show_button_onscreen(GAMESCREEN, game.button)
 
     pygame.display.update()
 

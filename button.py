@@ -23,54 +23,51 @@ class Button:
 
 
     def focusOnButton(self, window):
-        """Brings attention to which button is being focussed on"""
-        if self.active:
+        #if self.active:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 window.blit(self.imageLarger, (self.rect[0] - 5, self.rect[1] - 5, self.rect[2], self.rect[3]))
             else:
                 window.blit(self.image, self.rect)
 
 
-    def actionOnPress(self, pFleet, pGameGrid, cFleet, cGameGrid):
+    def action_on_press(self, game):
         """Which actions to take according to button selected"""
-        if self.active:
+        if not self.active:
             if self.name == 'Randomize':
-                self.randomizeShipPositions(pFleet, pGameGrid)
-                self.randomizeShipPositions(cFleet, cGameGrid)
+                self.randomize_ship_positions(game, game.pFleet, game.pGameGrid, game.deployment)
+                self.randomize_ship_positions(game, game.cFleet, game.cGameGrid, game.deployment)
             elif self.name == 'Reset':
-                self.resetShips(pFleet)
+                self.reset_ships(game.pFleet, game.deployment)
             elif self.name == 'Deploy':
-                self.deploymentPhase()
+                self.deployment_phase()
             elif self.name == 'Quit':
                 pass
             elif self.name == 'Redeploy':
-                self.restartTheGame()
+                self.restart_the_game()
 
 
-    # def randomizeShipPositions(self, shiplist, gameGrid, deployment):
-    #     """Calls the randomize ships function"""
-    #     if deployment == True:
-    #         randomizeShipPositions(shiplist, gameGrid)
+    def randomize_ship_positions(self, game, shiplist, gameGrid, deployment):
+        if deployment:
+            game.randomize_ship_positions(shiplist, gameGrid)
 
 
-    # def resetShips(self, shiplist):
-    #     """Resets the ships to their default positions"""
-    #     if DEPLOYMENT == True:
-    #         for ship in shiplist:
-    #             ship.returnToDefaultPosition()
+    def reset_ships(self, shiplist, deployment):
+        """Resets the ships to their default positions"""
+        if deployment:
+            for ship in shiplist:
+                ship.return_to_default_position()
 
 
-    def deploymentPhase(self):
+    def deployment_phase(self):
         pass
 
 
-    # def restartTheGame(self):
-    #     TOKENS.clear()
-    #     self.resetShips(pFleet)
-    #     self.randomizeShipPositions(cFleet, cGameGrid)
-    #     updateGameLogic(cGameGrid, cFleet, cGameLogic)
-    #     updateGameLogic(pGameGrid, pFleet, pGameLogic)
-
+    def restart_the_game(self, game):
+        #TOKENS.clear()
+        self.reset_ships(game.pFleet)
+        self.randomize_ship_positions(game.cFleet, game.cGameGrid)
+        game.update_pgame_logic(game.pGameGrid, game.pFleet)
+        game.update_cgame_logic(game.cGameGrid, game.cFleet)
 
     def updateButtons(self, gameStatus):
         """update the buttons as per the game stage"""
@@ -90,8 +87,9 @@ class Button:
         self.msgRect = self.msg.get_rect(center=self.rect.center)
 
 
-    def draw(self, window):
-        #self.updateButtons(DEPLOYMENT)
+    def draw(self, window, deployment):
+        #self.updateButtons(deployment)
         self.focusOnButton(window)
+        window.blit(self.image, self.rect)
         window.blit(self.msg, self.msgRect)
 

@@ -9,6 +9,8 @@ pygame.init()
 game = BattleShips_TypeOne()
 game.create_grid()
 game.create_fleet()
+game.create_button()
+game.randomize_ship_positions(game.cFleet, game.cGameGrid)
 RUNGAME = True
 
 while RUNGAME:
@@ -23,6 +25,10 @@ while RUNGAME:
                         ship.active = True
                         #game.sort_fleet(ship, game.pFleet)
                         ship.select_ship_and_move(game.pFleet, game, GAMESCREEN)
+
+                for button in game.button:
+                    if button.rect.collidepoint(pygame.mouse.get_pos()):
+                        button.action_on_press(game)
 
 
             elif event.button == 3:
