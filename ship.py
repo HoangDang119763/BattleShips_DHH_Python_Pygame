@@ -37,11 +37,11 @@ class Ship:
                              self.gunCoordsOffset[num])
                 )
 
-    def select_ship_and_move(self, pFleet, game, window):
+    def select_ship_and_move(self, pFleet, game, window, gamestate):
         """Chọn thuyền và di chuyển nó theo chuột"""
         while self.active:
             self.rect.center = pygame.mouse.get_pos()
-            updateGameScreen(window, game)
+            updateGameScreen(window, gamestate, game)
             for eventShip in pygame.event.get():
                 if eventShip.type == pygame.MOUSEBUTTONDOWN:
                     if not self.check_for_collisions(pFleet):

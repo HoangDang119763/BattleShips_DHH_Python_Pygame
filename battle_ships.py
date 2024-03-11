@@ -1,6 +1,4 @@
-from service import increase_animation_image
-from abc import ABC,abstractmethod
-
+from abc import ABC
 
 class BattleShips(ABC):
     pGameGrid = []
@@ -55,14 +53,8 @@ class BattleShips(ABC):
     def pick_random_ship_location(self, gameLogic):
         pass
 
-    @staticmethod
-    def display_radar_scanner(imagelist, indnum, SCANNER):
-        if SCANNER and indnum <= 359:
-            image = increase_animation_image(imagelist, indnum)
-            return image
-        else:
-            return False
-
-    def display_radar_blip(self, num, position):
+    def display_radar_scanner(self, imagelist, indnum, SCANNER):
         pass
 
+    def display_radar_blip(self, num, position, scanner):
+        pass

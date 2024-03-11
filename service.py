@@ -17,8 +17,8 @@ pygame.display.set_icon(icon)
 bg = pygame.image.load(r'assets\images\background\background.jpg')
 bg = pygame.transform.scale(bg, (SCREENWIDTH, SCREENHEIGHT))
 
-
-
+GAMESTATE = 'Main Menu'
+STAGE = ['Main Menu', 'Deployment', 'Game Over']
 def load_image(path, size, rotate=False):
     """A function to import the images into memory"""
     img = pygame.image.load(path).convert_alpha()
@@ -49,97 +49,84 @@ def load_sprite_sheet_images(spriteSheet, rows, cols, newSize, size):
 def increase_animation_image(imageList, ind):
     return imageList[ind]
 
-def updateGameScreen(window, game):
+def mainMenuScreen(window, game):
     GAMESCREEN.blit(bg, (0, 0))
-    game.show_grid_onscreen(GAMESCREEN)
-    game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid)
+
+    for button in game.button:
+        if button.name in ['Easy Computer', 'Hard Computer']:
+            button.active = True
+            button.draw(window, game.deployment)
+        else:
+            button.active = False
+
+def deploymentScreen(window, game):
+    window.fill((0, 0, 0))
+
+    window.blit(BACKGROUND, (0, 0))
+    window.blit(game.pgamegriding, (game.cellSize1//2, game.cellSize1//2))
+    window.blit(game.cgamegriding, (game.cGameGrid[0][0][0] - game.cellSize, game.cGameGrid[0][0][1] - game.cellSize))
+
+    #  Draws the player and computer grids to the screen
+    # game.show_grid_onscreen(GAMESCREEN)
     game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
+    #  Draw ships to screen
+    game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid, True)
+
+    game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid, True)
+
     game.show_button_onscreen(GAMESCREEN, game.button)
+
+    #computer.draw(window)
+
+    game.show_radar_scanner_onscreen(window)
+    game.show_radar_blip_onscreen(window)
+
+    game.show_token_onscreen(GAMESCREEN, game.tokens)
+
     game.update_pgame_logic(game.pGameGrid, game.pFleet)
     game.update_cgame_logic(game.cGameGrid, game.cFleet)
 
+
+def endScreen(window, game):
+    window.fill((0, 0, 0))
+
+    window.blit(ENDSCREENIMAGE, (0, 0))
+
+    for button in game.button:
+        if button.name in ['Easy Computer', 'Hard Computer', 'Quit']:
+            button.active = True
+            button.draw(window)
+        else:
+            button.active = False
+
+
+def updateGameScreen(window, gamestate, game):
+    # GAMESCREEN.blit(bg, (0, 0))
+    # game.show_grid_onscreen(GAMESCREEN)
+    # game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid)
+    # game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
+    # game.show_button_onscreen(GAMESCREEN, game.button)
+    # game.show_token_onscreen(GAMESCREEN, game.tokens)
+    # game.update_pgame_logic(game.pGameGrid, game.pFleet)
+    # game.update_cgame_logic(game.cGameGrid, game.cFleet)
+    # game.show_radar_scanner_onscreen(window)
+    # game.show_radar_blip_onscreen(window)
+    if gamestate == 'Main Menu':
+        mainMenuScreen(window, game)
+    elif gamestate == 'Deployment':
+        deploymentScreen(window, game)
+    elif gamestate == 'Game Over':
+        endScreen(window, game)
+
     pygame.display.update()
 
-# def main_menu_screen(window):
-#     window.fill((0, 0, 0))
-#     window.blit(MAINMENUIMAGE, (0, 0))
-#
-#     for button in BUTTONS:
-#         if button.name in ['Easy Computer', 'Hard Computer']:
-#             button.active = True
-#             button.draw(window)
-#         else:
-#             button.active = False
-#
-# def deployment_screen(window):
-#     window.fill((0, 0, 0))
-#
-#     window.blit(BACKGROUND, (0, 0))
-#     window.blit(PGAMEGRIDIMG, (0, 0))
-#     window.blit(CGAMEGRIDIMG, (cGameGrid[0][0][0] - 50, cGameGrid[0][0][1] - 50))
-#
-#     #  Draws the player and computer grids to the screen
-#     # showGridOnScreen(window, CELLSIZE, pGameGrid, cGameGrid)
-#
-#     #  Draw ships to screen
-#     for ship in pFleet:
-#         ship.draw(window)
-#         ship.snapToGridEdge(pGameGrid)
-#         ship.snapToGrid(pGameGrid)
-#
-#     displayShipNames(window)
-#
-#     for ship in cFleet:
-#         # ship.draw(window)
-#         ship.snapToGridEdge(cGameGrid)
-#         ship.snapToGrid(cGameGrid)
-#
-#     for button in BUTTONS:
-#         if button.name in ['Randomize', 'Reset', 'Deploy', 'Quit', 'Radar Scan', 'Redeploy']:
-#             button.active = True
-#             button.draw(window)
-#         else:
-#             button.active = False
-#
-#     computer.draw(window)
-#
-#     radarScan = displayRadarScanner(RADARGRIDIMAGES, INDNUM, SCANNER)
-#     if not radarScan:
-#         pass
-#     else:
-#         window.blit(radarScan, (cGameGrid[0][0][0], cGameGrid[0][-1][1]))
-#         window.blit(RADARGRID, (cGameGrid[0][0][0], cGameGrid[0][-1][1]))
-#
-#     RBlip = displayRadarBlip(INDNUM, BLIPPOSITION)
-#     if RBlip:
-#         window.blit(RBlip, (cGameGrid[BLIPPOSITION[0]][BLIPPOSITION[1]][0],
-#                             cGameGrid[BLIPPOSITION[0]][BLIPPOSITION[1]][1]))
-#
-#     for token in TOKENS:
-#         token.draw(window)
-#
-#     updateGameLogic(pGameGrid, pFleet, pGameLogic)
-#     updateGameLogic(cGameGrid, cFleet, cGameLogic)
-
-
-# def update_game_screen(window, GAMESTATE):
-#     if GAMESTATE == 'Main Menu':
-#         main_menu_screen(window)
-#     elif GAMESTATE == 'Deployment':
-#         deployment_screen(window)
-#     elif GAMESTATE == 'Game Over':
-#         endScreen(window)
-#
-#     pygame.display.update()
-
-# def endScreen(window):
-#     window.fill((0, 0, 0))
-#
-#     window.blit(ENDSCREENIMAGE, (0, 0))
-#
-#     for button in BUTTONS:
-#         if button.name in ['Easy Computer', 'Hard Computer', 'Quit']:
-#             button.active = True
-#             button.draw(window)
-#         else:
-#             button.active = False
+MAINMENUIMAGE = load_image(r'assets/images/background/Battleship.jpg', (SCREENWIDTH // 3 * 2, SCREENHEIGHT))
+ENDSCREENIMAGE = load_image(r'assets/images/background/Carrier.jpg', (SCREENWIDTH, SCREENHEIGHT))
+BACKGROUND = load_image(r'assets/images/background/gamebg.png', (SCREENWIDTH, SCREENHEIGHT))
+pygame.mixer.init()
+HITSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\explosion.wav')
+HITSOUND.set_volume(0.05)
+SHOTSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\gunshot.wav')
+SHOTSOUND.set_volume(0.05)
+MISSSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\splash.wav')
+MISSSOUND.set_volume(0.05)

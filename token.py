@@ -17,7 +17,6 @@ class Tokens:
         self.explosion = False
 
     def animate_explosion(self):
-        """Animating the Explosion sequence"""
         self.explosionIndex += 1
         if self.explosionIndex < len(self.explosionList):
             return self.explosionList[self.explosionIndex]
@@ -25,7 +24,6 @@ class Tokens:
             return self.animate_fire()
 
     def animate_fire(self):
-        """Animate the Fire sequence"""
         if pygame.time.get_ticks() - self.timer >= 100:
             self.timer = pygame.time.get_ticks()
             self.imageIndex += 1
@@ -36,7 +34,6 @@ class Tokens:
             return self.imageList[self.imageIndex]
 
     def draw(self, window):
-        """Draws the tokens to the screen"""
         if not self.imageList:
             window.blit(self.image, self.rect)
         else:

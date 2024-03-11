@@ -3,9 +3,16 @@ import random
 from battle_ships import BattleShips
 from ship import Ship
 from service import SCREENWIDTH, SCREENHEIGHT, load_image, load_animation_images, load_sprite_sheet_images, \
-    increase_animation_image
+    increase_animation_image, TURNTIMER
 from button import Button
 import pygame
+
+
+def deployment_phase(deployment):
+    flag = True
+    if deployment:
+        flag = False
+    return flag
 
 
 class BattleShips_TypeOne(BattleShips):
@@ -26,6 +33,29 @@ class BattleShips_TypeOne(BattleShips):
             self.button = []
             self.tokens = []
             self.status = True
+
+            self.pgamegriding = load_image('assets/images/grids/player_grid.png',
+                                           ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
+            self.cgamegriding = load_image('assets/images/grids/comp_grid.png',
+                                           ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
+            self.redtoken = load_image('assets/images/tokens/redtoken.png', (self.cellSize1, self.cellSize1))
+            self.greentoken = load_image('assets/images/tokens/greentoken.png', (self.cellSize1, self.cellSize1))
+            self.bluetoken = load_image('assets/images/tokens/bluetoken.png', (self.cellSize1, self.cellSize1))
+            self.firetokenimagelist = load_animation_images('assets/images/tokens/fireloop/fire1_ ', 13,
+                                                            (self.cellSize1, self.cellSize1))
+            self.explosionspritesheet = pygame.image.load(
+                'assets/images/tokens/explosion/explosion.png').convert_alpha()
+            self.explosionimagelist = []
+            for row in range(8):
+                for col in range(8):
+                    self.explosionimagelist.append(
+                        load_sprite_sheet_images(self.explosionspritesheet, col, row, (self.cellSize, self.cellSize),
+                                                 (128, 128)))
+            self.radargridimages = load_animation_images('assets/images/radar_base/radar_anim', 360,
+                                                         (self.numRows * self.cellSize, self.numColums * self.cellSize))
+            self.radarblipimages = load_animation_images('assets/images/radar_blip/Blip_', 11, (50, 50))
+            self.radargrid = load_image('assets/images/grids/grid_faint.png',
+                                        (self.numRows * self.cellSize, self.numColums * self.cellSize))
         else:
             cellSizeY = (SCREENHEIGHT // 2) // 10
             cellSizeX = (SCREENWIDTH // 2) // 10
@@ -40,6 +70,29 @@ class BattleShips_TypeOne(BattleShips):
             self.button = []
             self.tokens = []
             self.status = True
+
+            self.pgamegriding = load_image('assets/images/grids/player_grid.png',
+                                           ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
+            self.cgamegriding = load_image('assets/images/grids/comp_grid.png',
+                                           ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
+            self.redtoken = load_image('assets/images/tokens/redtoken.png', (self.cellSize, self.cellSize))
+            self.greentoken = load_image('assets/images/tokens/greentoken.png', (self.cellSize, self.cellSize))
+            self.bluetoken = load_image('assets/images/tokens/bluetoken.png', (self.cellSize, self.cellSize))
+            self.firetokenimagelist = load_animation_images('assets/images/tokens/fireloop/fire1_ ', 13,
+                                                            (self.cellSize, self.cellSize))
+            self.explosionspritesheet = pygame.image.load(
+                'assets/images/tokens/explosion/explosion.png').convert_alpha()
+            self.explosionimagelist = []
+            for row in range(8):
+                for col in range(8):
+                    self.explosionimagelist.append(
+                        load_sprite_sheet_images(self.explosionspritesheet, col, row, (self.cellSize, self.cellSize),
+                                                 (128, 128)))
+            self.radargridimages = load_animation_images('assets/images/radar_base/radar_anim', 360,
+                                                         (self.numRows * self.cellSize, self.numColums * self.cellSize))
+            self.radarblipimages = load_animation_images('assets/images/radar_blip/Blip_', 11, (50, 50))
+            self.radargrid = load_image('assets/images/grids/grid_faint.png',
+                                        (self.numRows * self.cellSize, self.numColums * self.cellSize))
 
     def create_grid(self):
         startx = self.pos[0]
@@ -66,6 +119,10 @@ class BattleShips_TypeOne(BattleShips):
             starty += self.cellSize
 
     def create_logic(self):
+        if self.cGameLogic:
+            self.cGameLogic = []
+        if self.pGameLogic:
+            self.pGameLogic = []
         for row in range(self.numRows):
             rowX = []
             for col in range(self.numColums):
@@ -107,15 +164,38 @@ class BattleShips_TypeOne(BattleShips):
                 for col in row:
                     pygame.draw.rect(window, (255, 255, 255), (col[0], col[1], self.cellSize, self.cellSize), 1)
 
-    def show_ship_onscreen(self, window, fleet, gamegrid):
+    def show_ship_onscreen(self, window, fleet, gamegrid, visible=False):
         for ship in fleet:
-            ship.draw(window)
+            if visible:
+                ship.draw(window)
             ship.snap_to_grid_edge(gamegrid)
             ship.snap_to_grid(gamegrid, self.cellSize)
 
     def show_button_onscreen(self, window, button):
         for buttonx in button:
-            buttonx.draw(window, self.deployment)
+            if buttonx.name in ['Randomize', 'Reset', 'Deploy', 'Quit', 'Radar Scan', 'Redeploy']:
+                buttonx.active = True
+                buttonx.draw(window, self.deployment)
+            else:
+                buttonx.active = False
+
+    def show_token_onscreen(self, window, token):
+        for tokens in token:
+            tokens.draw(window)
+
+    def show_radar_scanner_onscreen(self, window):
+        radarScan = self.display_radar_scanner(self.radargridimages, self.indnum, self.scanner)
+        if not radarScan:
+            pass
+        else:
+            window.blit(radarScan, (self.cGameGrid[0][0][0], self.cGameGrid[0][-1][1]))
+            window.blit(self.radargrid, (self.cGameGrid[0][0][0], self.cGameGrid[0][-1][1]))
+
+    def show_radar_blip_onscreen(self, window):
+        radarBlip = self.display_radar_blip(self.indnum, self.blipposition, self.scanner)
+        if radarBlip:
+            window.blit(radarBlip, (self.cGameGrid[self.blipposition[0]][self.blipposition[1]][0],
+                                    self.cGameGrid[self.blipposition[0]][self.blipposition[1]][1]))
 
     def create_fleet(self):
         FLEET = {
@@ -180,54 +260,42 @@ class BattleShips_TypeOne(BattleShips):
             Button(BUTTONIMAGE1, (250, 100), (900, SCREENHEIGHT // 2 + 150), 'Hard Computer')
         ]
 
-    def create_sound_image(self):
-        MAINMENUIMAGE = load_image('assets/images/background/Battleship.jpg', (SCREENWIDTH // 3 * 2, SCREENHEIGHT))
-        ENDSCREENIMAGE = load_image('assets/images/background/Carrier.jpg', (SCREENWIDTH, SCREENHEIGHT))
-        BACKGROUND = load_image('assets/images/background/gamebg.png', (SCREENWIDTH, SCREENHEIGHT))
-        PGAMEGRIDIMG = load_image('assets/images/grids/player_grid.png',
-                                  ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
-        CGAMEGRIDIMG = load_image('assets/images/grids/comp_grid.png',
-                                  ((self.numRows + 1) * self.cellSize, (self.numColums + 1) * self.cellSize))
-        REDTOKEN = load_image('assets/images/tokens/redtoken.png', (self.cellSize1, self.cellSize1))
-        GREENTOKEN = load_image('assets/images/tokens/greentoken.png', (self.cellSize1, self.cellSize1))
-        BLUETOKEN = load_image('assets/images/tokens/bluetoken.png', (self.cellSize1, self.cellSize1))
-        FIRETOKENIMAGELIST = load_animation_images('assets/images/tokens/fireloop/fire1_ ', 13,
-                                                   (self.cellSize1, self.cellSize1))
-        EXPLOSIONSPRITESHEET = pygame.image.load('assets/images/tokens/explosion/explosion.png').convert_alpha()
-        EXPLOSIONIMAGELIST = []
-        for row in range(8):
-            for col in range(8):
-                EXPLOSIONIMAGELIST.append(
-                    load_sprite_sheet_images(EXPLOSIONSPRITESHEET, col, row, (self.cellSize, self.cellSize),
-                                             (128, 128)))
-        RADARGRIDIMAGES = load_animation_images('assets/images/radar_base/radar_anim', 360,
-                                                (self.numRows * self.cellSize, self.numColums * self.cellSize))
-        RADARBLIPIMAGES = load_animation_images('assets/images/radar_blip/Blip_', 11, (50, 50))
-        RADARGRID = load_image('assets/images/grids/grid_faint.png',
-                               ((self.numRows) * self.cellSize, (self.numColums) * self.cellSize))
-        HITSOUND = pygame.mixer.Sound('assets/sounds/explosion.wav')
-        HITSOUND.set_volume(0.05)
-        SHOTSOUND = pygame.mixer.Sound('assets/sounds/gunshot.wav')
-        SHOTSOUND.set_volume(0.05)
-        MISSSOUND = pygame.mixer.Sound('assets/sounds/splash.wav')
-        MISSSOUND.set_volume(0.05)
-
     def pick_random_ship_location(self, gameLogic):
         validChoice = False
+
+        posX = -1
+        posY = -1
         while not validChoice:
-            posX = random.randint(0, 9)
-            posY = random.randint(0, 9)
+            posX = random.randint(0, 100 % 10)
+            posY = random.randint(0, 100 % 10)
             if gameLogic[posX][posY] == 'O':
                 validChoice = True
 
-        return (posX, posY)
+        return posX, posY
 
     def display_radar_scanner(self, imagelist, indnum, scanner):
-        if scanner == True and indnum <= 359:
+        if scanner and indnum <= 359:
             image = increase_animation_image(imagelist, indnum)
             return image
         else:
             return False
+
+    def display_radar_blip(self, num, position, scanner):
+        if scanner:
+            image = None
+            if position[0] >= 5 and position[1] >= 5:
+                if 0 <= num <= 90:
+                    image = increase_animation_image(self.radarblipimages, num // 10)
+            elif position[0] < 5 <= position[1]:
+                if 270 < num <= 360:
+                    image = increase_animation_image(self.radarblipimages, (num // 4) // 10)
+            elif position[0] < 5 and position[1] < 5:
+                if 180 < num <= 270:
+                    image = increase_animation_image(self.radarblipimages, (num // 3) // 10)
+            elif position[0] >= 5 > position[1]:
+                if 90 < num <= 180:
+                    image = increase_animation_image(self.radarblipimages, (num // 2) // 10)
+            return image
 
     def randomize_ship_positions(self, shipList, gameGrid):
         placedShips = []
@@ -268,10 +336,17 @@ class BattleShips_TypeOne(BattleShips):
 
         return posX, posY
 
-    def deployment_phase(self, deployment):
-        flag = True
-        if deployment:
-            flag = False
-        return flag
+    def take_turns(self, p1, p2):
+        if p1.turn:
+            p2.turn = False
+        else:
+            p2.turn = True
+            if not p2.makeAttack(self.pGameLogic, self, TURNTIMER):
+                p1.turn = True
 
-
+    def check_for_winners(self, grid):
+        validGame = True
+        for row in grid:
+            if 'O' in row:
+                validGame = False
+        return validGame
