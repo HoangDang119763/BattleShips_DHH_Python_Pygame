@@ -92,4 +92,6 @@ while RUNGAME:
         if player1Wins or computerWins:
             GAMESTATE = STAGE[2]
 
+    game.take_turns(player1, computer)
+
 pygame.quit()

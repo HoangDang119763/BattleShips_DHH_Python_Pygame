@@ -92,10 +92,11 @@ def endScreen(window, game):
 
     window.blit(ENDSCREENIMAGE, (0, 0))
 
+
     for button in game.button:
         if button.name in ['Easy Computer', 'Hard Computer', 'Quit']:
             button.active = True
-            button.draw(window)
+            button.draw(window, game.deployment)
         else:
             button.active = False
 
