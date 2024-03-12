@@ -1,97 +1,181 @@
-import pygame
+import pygame, sys
 from player import Player
 from easy_computer import EasyComputer
 from hard_computer import HardComputer
+from button import Button
 
 from battle_ship_type_one import BattleShips_TypeOne
-from service import GAMESCREEN, GAMESTATE, updateGameScreen, STAGE
+from service import SCREENWIDTH, SCREENHEIGHT, load_image, load_animation_images, load_sprite_sheet_images, GAMESCREEN, get_font, BUTTONSOUND, updateGameScreen
 
 pygame.init()
 
-game = BattleShips_TypeOne()
-game.create_grid()
-game.create_fleet()
-game.create_logic()
-game.create_button()
-game.randomize_ship_positions(game.cFleet, game.cGameGrid)
-player1 = Player()
-computer = EasyComputer()
-print(game.deployment)
-print(GAMESTATE)
-RUNGAME = True
+# game = BattleShips_TypeOne()
+# game.create_grid()
+# game.create_fleet()
+# game.create_logic()
+# game.create_button()
+# game.randomize_ship_positions(game.cFleet, game.cGameGrid)
+# player1 = Player()
+# computer = EasyComputer()
+# RUNGAME = True
+def menu_main(window):
+    print("Menu screen")
+    while True:
+        bgmain = pygame.image.load(r'assets\images\background\backroundplay.jpg')
+        bgmain = pygame.transform.scale(bgmain, (SCREENWIDTH, SCREENHEIGHT))
+        window.blit(bgmain, (0, 0))
 
-while RUNGAME:
+        textmain = get_font(100).render(" MENU ", True, "Black")
+        testrect = textmain.get_rect(center=((SCREENWIDTH)//2, (SCREENHEIGHT)//6))
+        window.blit(textmain, testrect)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            RUNGAME = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if game.deployment:
-                    for ship in game.pFleet:
-                        if ship.rect.collidepoint(pygame.mouse.get_pos()):
-                            ship.active = True
-                            game.sort_fleet(ship, game.pFleet)
-                            ship.select_ship_and_move(game.pFleet, game, GAMESCREEN, GAMESTATE)
+        BUTTONIMAGE = load_image(r'assets\images\buttons\button.png', (300, 100))
+        button = [
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2 - 150), 'Play'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2), 'Option'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2 + 150), 'Quit')
+        ]
 
-                else:
-                    if player1.turn:
-                        player1.makeAttack(game.cGameGrid, game.cGameLogic, game)
-                for button in game.button:
-                    if button.rect.collidepoint(pygame.mouse.get_pos()):
-                        if button.name == 'Deploy' and button.active:
-                            status = button.deployment_phase(game.deployment)
-                            game.deployment = status
-                        elif button.name == 'Redeploy' and button.active:
-                            status = button.deployment_phase(game.deployment)
-                            game.deployment = status
-                            print(game.deployment)
-                        elif button.name == 'Quit':
-                            RUNGAME = False
-                        elif button.name == 'Radar Scan' and button.active:
-                            game.scanner = True
-                            game.indnum = 0
-                            game.blipposition = game.pick_random_ship_location(game.cGameLogic)
-                        elif (button.name == 'Easy Computer' or button.name == 'Hard Computer') and button.active:
-                            if button.name == 'Easy Computer':
-                                computer = EasyComputer()
-                            elif button.name == 'Hard Computer':
-                                computer = HardComputer()
-                            if GAMESTATE == 'Game Over':
-                                game.tokens.clear()
-                                for ship in game.pFleet:
-                                    ship.returnToDefaultPosition()
+        for buttons in button:
+            if buttons.name in ['Play', 'Option', 'Quit']:
+                buttons.active = True
+                buttons.draw(window, False)
+            else:
+                buttons.active = False
 
-                                game.randomize_ship_positions(game.cFleet, game.cGameGrid)
-                                game.create_logic()
-                                game.update_pgame_logic(game.pGameGrid, game.pFleet)
-                                game.update_cgame_logic(game.cGameGrid, game.cFleet)
-                                status = game.delployment_phase(game.deployment)
-                                game.deployment = status
-                            GAMESTATE = 'Deployment'
-                            print(GAMESTATE)
-                        button.action_on_press(game)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for buttonx in button:
+                        if buttonx.rect.collidepoint(pygame.mouse.get_pos()):
+                            if buttonx.name == 'Play' and buttonx.active:
+                                BUTTONSOUND.play()
+                                play(window)
+                            elif buttonx.name == 'Option' and buttonx.active:
+                                BUTTONSOUND.play()
+                                option(GAMESCREEN)
+                            elif buttonx.name == 'Quit' and buttonx.active:
+                                BUTTONSOUND.play()
+                                pygame.quit()
+                                sys.exit()
 
-            elif event.button == 2:
-                game.print_game_logic()
+        pygame.display.update()
 
-            elif event.button == 3:
-                if game.deployment:
-                    for ship in game.pFleet:
-                        if ship.rect.collidepoint(pygame.mouse.get_pos()) and not ship.check_for_rotate_collisions(
-                                game.pFleet):
-                            ship.rotate_ship(True)
 
-    updateGameScreen(GAMESCREEN, GAMESTATE, game)
-    if game.scanner:
-        game.indnum += 1
+def play(window):
+    print("Play screen")
+    while True:
+        bgplay = pygame.image.load(r'assets\images\background\Carrier.jpg')
+        bgplay = pygame.transform.scale(bgplay, (SCREENWIDTH, SCREENHEIGHT))
+        window.blit(bgplay, (0, 0))
 
-    if GAMESTATE == 'Deployment' and game.deployment != True:
-        player1Wins = game.check_for_winners(game.cGameLogic)
-        computerWins = game.check_for_winners(game.pGameLogic)
-        if player1Wins or computerWins:
-            GAMESTATE = STAGE[2]
+        textplay = get_font(100).render(" PLAY ", True, "Black")
+        testrect = textplay.get_rect(center=((SCREENWIDTH) // 2, (SCREENHEIGHT) // 6))
+        window.blit(textplay, testrect)
 
-    game.take_turns(player1, computer)
+        BUTTONIMAGE = load_image(r'assets\images\buttons\button.png', (300, 100))
+        button = [
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2 - 150), 'Computer'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2), 'Multiplayer'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300)//2, (SCREENHEIGHT - 100)//2 + 150), 'Quit')
+        ]
+
+        for buttons in button:
+            if buttons.name in ['Computer', 'Multiplayer', 'Quit']:
+                buttons.active = True
+                buttons.draw(window, False)
+            else:
+                buttons.active = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for buttonx in button:
+                        if buttonx.rect.collidepoint(pygame.mouse.get_pos()):
+                            if buttonx.name == 'Computer' and buttonx.active:
+                                BUTTONSOUND.play()
+                                computer(window)
+                            elif buttonx.name == 'Multiplayer' and buttonx.active:
+                                BUTTONSOUND.play()
+                                multiplayer()
+                            elif buttonx.name == 'Quit' and buttonx.active:
+                                BUTTONSOUND.play()
+                                menu_main(GAMESCREEN)
+        pygame.display.update()
+
+def option(window):
+    print("Option screen")
+
+def computer(window):
+    print("Play with computer")
+    while True:
+        bgcomputer = pygame.image.load(r'assets\images\background\Destroyer.jpg')
+        bgcomputer = pygame.transform.scale(bgcomputer, (SCREENWIDTH, SCREENHEIGHT))
+        window.blit(bgcomputer, (0, 0))
+
+        textcomputer = get_font(100).render(" COMPUTER PLAY ", True, "Black")
+        testrect = textcomputer.get_rect(center=((SCREENWIDTH) // 2, (SCREENHEIGHT) // 6))
+        window.blit(textcomputer, testrect)
+
+        BUTTONIMAGE = load_image(r'assets\images\buttons\button.png', (300, 100))
+        button = [
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2 - 150), 'Game Type One - Easy'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2), 'Game Type One - Hard'),
+            Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2 + 150), 'Quit')
+        ]
+
+        for buttons in button:
+            if buttons.name in ['Game Type One - Easy', 'Game Type One - Hard', 'Quit']:
+                buttons.active = True
+                buttons.draw(window, False)
+            else:
+                buttons.active = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for buttonx in button:
+                        if buttonx.rect.collidepoint(pygame.mouse.get_pos()):
+                            if buttonx.name == 'Game Type One - Easy' and buttonx.active:
+                                BUTTONSOUND.play()
+                                start_game_typeone_easy(window)
+                            elif buttonx.name == 'Game Type One - Hard' and buttonx.active:
+                                BUTTONSOUND.play()
+                                start_game_typeone_hard(window)
+                            elif buttonx.name == 'Quit' and buttonx.active:
+                                BUTTONSOUND.play()
+                                play(window)
+                                sys.exit()
+        pygame.display.update()
+
+def start_game_typeone_easy(window):
+    print("Play game type one easy")
+    game = BattleShips_TypeOne()
+
+    game.start_game(window, 1)
+    if game.playerchoice == 1:
+        start_game_typeone_easy(window)
+    elif game.playerchoice == 0:
+        computer(window)
+
+def start_game_typeone_hard(window):
+    print("Play game type one hard")
+    game = BattleShips_TypeOne()
+
+    game.start_game(window, 2)
+    if game.playerchoice == 1:
+        start_game_typeone_hard(window)
+    elif game.playerchoice == 0:
+        computer(window)
+
+def multiplayer():
+    print("Play multiplayer")
+menu_main(GAMESCREEN)
 
 pygame.quit()

@@ -24,6 +24,7 @@ class Ship:
         self.rotation = False
         #  Ship is current selection
         self.active = False
+        self.available = True
         #  Load gun Images
         self.gunslist = []
         if numGuns > 0:
@@ -37,17 +38,19 @@ class Ship:
                              self.gunCoordsOffset[num])
                 )
 
-    def select_ship_and_move(self, pFleet, game, window, gamestate):
+    def select_ship_and_move(self, pFleet, game, window):
         """Chọn thuyền và di chuyển nó theo chuột"""
         while self.active:
             self.rect.center = pygame.mouse.get_pos()
-            updateGameScreen(window, gamestate, game)
+            game.update_game_screen(window, None)
+            updateGameScreen(window, game, 2)
             for eventShip in pygame.event.get():
                 if eventShip.type == pygame.MOUSEBUTTONDOWN:
                     if not self.check_for_collisions(pFleet):
                         if eventShip.button == 1:
                             self.hImageRect.center = self.vImageRect.center = self.rect.center
                             self.active = False
+                            self.available = self.check_available()
 
                     """Chuột phải để thay đổi chiều"""
                     if eventShip.button == 3:
@@ -99,6 +102,12 @@ class Ship:
 
         self.rect.topleft = self.pos
         self.hImageRect.center = self.vImageRect.center = self.rect.center
+
+    def check_available(self):
+        flag = True
+        if self.rect.topleft == self.pos:
+            flag = False
+        return flag
 
     def snap_to_grid_edge(self, gridCoords):
         if self.rect.topleft != self.pos:

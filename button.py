@@ -28,7 +28,6 @@ class Button:
                 window.blit(self.image, self.rect)
 
     def action_on_press(self, game):
-        """Which actions to take according to button selected"""
         if self.active:
             if self.name == 'Randomize':
                 self.randomize_ship_positions(game, game.pFleet, game.pGameGrid, game.deployment)
@@ -37,14 +36,14 @@ class Button:
                 self.reset_ships(game.pFleet, game.deployment)
             elif self.name == 'Deploy':
                 self.deployment_phase(game.deployment)
-            elif self.name == 'Quit':
-                pass
+            elif self.name == 'Back':
+                self.deployment_phase(game.deployment)
             elif self.name == 'Redeploy':
                 game.tokens.clear()
                 self.reset_ships(game.pFleet, game.deployment)
                 self.randomize_ship_positions(game, game.cFleet, game.cGameGrid, game.deployment)
-                # game.update_pgame_logic(game.pGameGrid, game.pFleet)
-                # game.update_cgame_logic(game.cGameGrid, game.cFleet)
+                game.update_pgame_logic(game.pGameGrid, game.pFleet)
+                game.update_cgame_logic(game.cGameGrid, game.cFleet)
                 #self.restart_the_game(game)
 
     def randomize_ship_positions(self, game, shiplist, gameGrid, deployment):
@@ -71,7 +70,6 @@ class Button:
         game.update_cgame_logic(game.cGameGrid, game.cFleet)
 
     def updateButtons(self, gameStatus):
-        """update the buttons as per the game stage"""
         if self.name == 'Deploy' and not gameStatus:
             self.name = 'Redeploy'
         elif self.name == 'Redeploy' and gameStatus:
@@ -81,8 +79,8 @@ class Button:
         elif self.name == 'Radar Scan' and gameStatus:
             self.name = 'Reset'
         if self.name == 'Randomize' and not gameStatus:
-            self.name = 'Quit'
-        elif self.name == 'Quit' and gameStatus:
+            self.name = 'Back'
+        elif self.name == 'Back' and gameStatus:
             self.name = 'Randomize'
         self.msg = self.addText(self.name)
         self.msgRect = self.msg.get_rect(center=self.rect.center)

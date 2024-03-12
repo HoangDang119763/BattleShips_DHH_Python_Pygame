@@ -15,7 +15,7 @@ class HardComputer(EasyComputer):
         rowY = -1
         if len(self.moves) == 0:
             computerturntimer = pygame.time.get_ticks()
-            if computerturntimer - turntimer >= 3000:
+            if computerturntimer - turntimer >= 1000:
                 validChoice = False
                 while not validChoice:
                     rowX = random.randint(0, 9)
@@ -26,7 +26,7 @@ class HardComputer(EasyComputer):
 
                 if gamelogic[rowX][rowY] == 'O':
                     game.tokens.append(
-                        Tokens(game.redtoken, game.pGameGrid[rowX][rowY], 'Hit', game.firetokenimageslist,
+                        Tokens(game.redtoken, game.pGameGrid[rowX][rowY], 'Hit', game.firetokenimagelist,
                                game.explosionimagelist, None))
                     gamelogic[rowX][rowY] = 'T'
                     SHOTSOUND.play()

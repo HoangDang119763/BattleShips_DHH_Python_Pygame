@@ -1,5 +1,7 @@
 import pygame
 
+from button import Button
+
 SCREENWIDTH = 1530
 SCREENHEIGHT = 775
 NUMROWS = 10
@@ -8,14 +10,13 @@ cellSizeY = (SCREENHEIGHT // 2) // (NUMROWS)
 cellSizeX = (SCREENWIDTH // 2) // (NUMCOLS)
 CELLSIZE = cellSizeY
 STAGE = ['Main Menu', 'Deployment', 'Game Over']
-TURNTIMER = pygame.time.get_ticks()
 GAMESTATE = 'Main Menu'
 GAMESCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 pygame.display.set_caption('Battle Ships')
 icon = pygame.image.load(r'assets\images\background\icon.png')
 pygame.display.set_icon(icon)
-bg = pygame.image.load(r'assets\images\background\background.jpg')
-bg = pygame.transform.scale(bg, (SCREENWIDTH, SCREENHEIGHT))
+
+bg = None
 
 GAMESTATE = 'Main Menu'
 STAGE = ['Main Menu', 'Deployment', 'Game Over']
@@ -67,7 +68,7 @@ def deploymentScreen(window, game):
     window.blit(game.cgamegriding, (game.cGameGrid[0][0][0] - game.cellSize, game.cGameGrid[0][0][1] - game.cellSize))
 
     #  Draws the player and computer grids to the screen
-    # game.show_grid_onscreen(GAMESCREEN)
+    game.show_grid_onscreen(GAMESCREEN)
     game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
     #  Draw ships to screen
     game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid, True)
@@ -101,25 +102,28 @@ def endScreen(window, game):
             button.active = False
 
 
-def updateGameScreen(window, gamestate, game):
-    # GAMESCREEN.blit(bg, (0, 0))
+def updateGameScreen(window, game, type):
     # game.show_grid_onscreen(GAMESCREEN)
-    # game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid)
-    # game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid)
+    # game.show_ship_onscreen(GAMESCREEN, game.pFleet, game.pGameGrid, True)
+    # game.show_ship_onscreen(GAMESCREEN, game.cFleet, game.cGameGrid, True)
     # game.show_button_onscreen(GAMESCREEN, game.button)
     # game.show_token_onscreen(GAMESCREEN, game.tokens)
     # game.update_pgame_logic(game.pGameGrid, game.pFleet)
     # game.update_cgame_logic(game.cGameGrid, game.cFleet)
     # game.show_radar_scanner_onscreen(window)
     # game.show_radar_blip_onscreen(window)
-    if gamestate == 'Main Menu':
+
+    if type == 1:
         mainMenuScreen(window, game)
-    elif gamestate == 'Deployment':
+    elif type == 2:
         deploymentScreen(window, game)
-    elif gamestate == 'Game Over':
+    elif type == 3:
         endScreen(window, game)
 
     pygame.display.update()
+
+def get_font(size):
+    return pygame.font.Font("assets/images/font/font.ttf", size)
 
 MAINMENUIMAGE = load_image(r'assets/images/background/Battleship.jpg', (SCREENWIDTH // 3 * 2, SCREENHEIGHT))
 ENDSCREENIMAGE = load_image(r'assets/images/background/Carrier.jpg', (SCREENWIDTH, SCREENHEIGHT))
@@ -131,3 +135,5 @@ SHOTSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\gunshot.wav')
 SHOTSOUND.set_volume(0.05)
 MISSSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\splash.wav')
 MISSSOUND.set_volume(0.05)
+BUTTONSOUND = pygame.mixer.Sound(r'assets\sounds\sounds\buttonsound.mp3')
+BUTTONSOUND.set_volume(10)

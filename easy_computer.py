@@ -19,7 +19,7 @@ class EasyComputer:
         computerturntimer = pygame.time.get_ticks()
         rowX = -1
         colX = -1
-        if computerturntimer - turntimer >= 3000:
+        if computerturntimer - turntimer >= 1000:
             validChoice = False
             while not validChoice:
                 rowX = random.randint(0, 9)
