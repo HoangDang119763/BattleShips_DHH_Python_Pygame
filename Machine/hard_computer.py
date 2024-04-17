@@ -1,7 +1,7 @@
-from easy_computer import EasyComputer
+from Machine.easy_computer import EasyComputer
 import pygame
 import random
-from Utilities.token import Tokens
+from Utilities.gametoken import Tokens
 from Utilities.service import HITSOUND, SHOTSOUND, MISSSOUND
 
 

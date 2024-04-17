@@ -10,6 +10,8 @@ CELLSIZE = cellSizeY
 STAGE = ['Main Menu', 'Deployment', 'Game Over']
 GAMESCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 pygame.display.set_caption('Battle Ships')
+icon = pygame.image.load(r'assets\images\background\icon.png')
+pygame.display.set_icon(icon)
 
 bg = None
 
@@ -52,13 +54,15 @@ def get_font(size):
 
 pygame.mixer.init()
 
-HITSOUND = pygame.mixer.Sound('assets/sounds/sounds/explosion.wav')
+HITSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/explosion.wav')
 SHOTSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/gunshot.wav')
 MISSSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/splash.wav')
 BUTTONSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/buttonsound.mp3')
 PLAYERLOSESOUND = pygame.mixer.Sound(r'assets/sounds/sounds/playerlose.mp3')
 PLAYERWINSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/playerwin.mp3')
 PLAYINGSOUND = pygame.mixer.Sound(r'assets/sounds/sounds/playing.mp3')
+PLAYINGSOUND1= pygame.mixer.Sound(r'assets/sounds/sounds/playing1.mp3')
+PLAYINGSOUND2 = pygame.mixer.Sound(r'assets/sounds/sounds/playing2.mp3')
 HITSOUND.set_volume(0.05)
 SHOTSOUND.set_volume(0.05)
 MISSSOUND.set_volume(0.05)
@@ -67,6 +71,8 @@ BUTTONSOUND.set_volume(10)
 PLAYERLOSESOUND.set_volume(0.9)
 PLAYERWINSOUND.set_volume(0.5)
 PLAYINGSOUND.set_volume(0.05)
+PLAYINGSOUND1.set_volume(0.05)
+PLAYINGSOUND2.set_volume(0.05)
 
 
 def set_volume(status):
@@ -79,6 +85,8 @@ def set_volume(status):
         PLAYERLOSESOUND.set_volume(0.9)
         PLAYERWINSOUND.set_volume(0.5)
         PLAYINGSOUND.set_volume(0.05)
+        PLAYINGSOUND1.set_volume(0.05)
+        PLAYINGSOUND2.set_volume(0.05)
     else:
         HITSOUND.set_volume(0)
         SHOTSOUND.set_volume(0)
@@ -96,4 +104,6 @@ def set_volume(status):
         PLAYERLOSESOUND.stop()
         PLAYERWINSOUND.stop()
         PLAYINGSOUND.stop()
+        PLAYINGSOUND1.stop()
+        PLAYINGSOUND2.stop()
 

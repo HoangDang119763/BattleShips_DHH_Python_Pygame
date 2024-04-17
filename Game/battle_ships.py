@@ -7,9 +7,12 @@ class BattleShips(ABC):
     cGameGrid = []
     cGameLogic = []
 
-    def __init__(self, numrows, numcolums):
+    def __init__(self, numrows, numcolums, graphic, numfleet, music):
         self.numRows = numrows
         self.numColums = numcolums
+        self.graphic = graphic
+        self.numfleet = numfleet
+        self.music = music
         self.pGameGrid = []
         self.pGameLogic = []
         self.cGameGrid = []

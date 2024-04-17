@@ -1,4 +1,4 @@
-from service import load_image
+from Utilities.service import load_image
 import pygame
 
 
@@ -10,7 +10,7 @@ class Guns:
         self.rect = self.image.get_rect(center=pos)
 
     def update(self, ship):
-        """Cập nhật vị trí Gun trên Ship"""
+        """Cập nhật vị trí Gun trên Utilities"""
         self.rotate_guns(ship)
         if not ship.rotation:
             self.rect.center = (ship.rect.centerx, ship.rect.centery + (ship.image.get_height() // 2 * self.offset))

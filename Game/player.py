@@ -1,5 +1,5 @@
-from token import Tokens
-from service import SHOTSOUND, HITSOUND, MISSSOUND
+from Utilities.gametoken import Tokens
+from Utilities.service import SHOTSOUND, HITSOUND, MISSSOUND
 import pygame
 
 

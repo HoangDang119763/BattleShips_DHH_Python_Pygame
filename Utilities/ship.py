@@ -1,6 +1,6 @@
-from service import load_image
+from Utilities.service import load_image
 import pygame
-from gun import Guns
+from Utilities.gun import Guns
 class Ship:
     def __init__(self, name, img, pos, size, numGuns=0, gunPath=None, gunsize=None, gunCoordsOffset=None):
         self.name = name
@@ -21,7 +21,7 @@ class Ship:
         self.image = self.vImage
         self.rect = self.vImageRect
         self.rotation = False
-        #  Ship is current selection
+        #  Utilities is current selection
         self.active = False
         self.available = True
         #  Load gun Images

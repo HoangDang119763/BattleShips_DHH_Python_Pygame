@@ -1,50 +1,48 @@
 import random
 
-from battle_ships import BattleShips
-from Ship.ship import Ship
-from service import SCREENWIDTH, SCREENHEIGHT, load_image, increase_animation_image, get_font, BUTTONSOUND, \
-    PLAYERLOSESOUND, PLAYERWINSOUND
-from button import Button
+from Game.battle_ships import BattleShips
+from Utilities.ship import Ship
+from Utilities.service import SCREENWIDTH, SCREENHEIGHT, load_image, increase_animation_image, get_font, BUTTONSOUND, \
+    PLAYERLOSESOUND, PLAYERWINSOUND, PLAYINGSOUND, PLAYINGSOUND1, PLAYINGSOUND2
+from Utilities.button import Button
 import pygame
-from player import Player
-from easy_computer import EasyComputer
-from hard_computer import HardComputer
+from Game.player import Player
+from Machine.easy_computer import EasyComputer
+from Machine.hard_computer import HardComputer
 from GameSetting import battleship_10x10, battleship_20x20
 
 
 class BattleShips_TypeOne(BattleShips):
-    def __init__(self, numrows=None, numcolumns=None):
-        if numrows is not None and numcolumns is not None:
-            super().__init__(numrows, numcolumns)
-            if numrows == 10:
-                self.size = battleship_10x10
-            elif numrows == 20:
-                self.size = battleship_20x20
-            self.pos = (self.size.cellSizeX, self.size.cellSizeX)
-            self.deployment = True
-            self.scanner = False
-            self.indnum = 0
-            self.blipposition = None
-            self.cFleet = []
-            self.pFleet = []
-            self.button = []
-            self.tokens = []
-            self.status = True
-
-            self.pgamegriding = self.size.pgamegriding
-            self.cgamegriding = self.size.cgamegriding
-            self.redtoken = self.size.redtoken
-            self.greentoken = self.size.greentoken
-            self.bluetoken = self.size.bluetoken
-            self.firetokenimagelist = self.size.firetokenimagelist
-            self.explosionspritesheet = self.size.explosionspritesheet
-            self.explosionimagelist = self.size.explosionimagelist
-            self.radargridimages = self.size.radargridimages
-            self.radarblipimages = self.size.radarblipimages
-            self.radargrid = self.size.radargrid
-            self.playerchoice = None
-            self.player = Player()
-            self.computer = None
+    def __init__(self, numrows, numcolumns, graphic, numfleet, music):
+        super().__init__(numrows, numcolumns, graphic, numfleet, music)
+        if numrows == 10:
+            self.size = battleship_10x10
+        elif numrows == 20:
+            self.size = battleship_20x20
+        self.pos = (self.size.cellSizeX, self.size.cellSizeX)
+        self.deployment = True
+        self.scanner = False
+        self.indnum = 0
+        self.blipposition = None
+        self.cFleet = []
+        self.pFleet = []
+        self.button = []
+        self.tokens = []
+        self.status = True
+        self.pgamegriding = self.size.pgamegriding
+        self.cgamegriding = self.size.cgamegriding
+        self.redtoken = self.size.redtoken
+        self.greentoken = self.size.greentoken
+        self.bluetoken = self.size.bluetoken
+        self.firetokenimagelist = self.size.firetokenimagelist
+        self.explosionspritesheet = self.size.explosionspritesheet
+        self.explosionimagelist = self.size.explosionimagelist
+        self.radargridimages = self.size.radargridimages
+        self.radarblipimages = self.size.radarblipimages
+        self.radargrid = self.size.radargrid
+        self.playerchoice = None
+        self.player = Player()
+        self.computer = None
 
     def create_grid(self):
         startx = self.pos[0]
@@ -152,10 +150,20 @@ class BattleShips_TypeOne(BattleShips):
             window.blit(radarBlip, (self.cGameGrid[self.blipposition[0]][self.blipposition[1]][0],
                                     self.cGameGrid[self.blipposition[0]][self.blipposition[1]][1]))
 
-    def create_fleet(self, num=None):
+    def create_fleet(self):
         FLEET = None
-        if num is None:
+        if self.numfleet == 0:
             FLEET = self.size.FLEET
+        elif self.numfleet == 1:
+            FLEET = self.size.FLEET1
+        elif self.numfleet == 2:
+            FLEET = self.size.FLEET2
+        elif self.numfleet == 3:
+            FLEET = self.size.FLEET3
+        elif self.numfleet == 4:
+            FLEET = self.size.FLEET4
+        elif self.numfleet == 5:
+            FLEET = self.size.FLEET5
         for name in FLEET.keys():
             temp = Ship(name, FLEET[name][1],
                         FLEET[name][2],
@@ -194,8 +202,8 @@ class BattleShips_TypeOne(BattleShips):
         return num
 
     def create_button(self):
-        BUTTONIMAGE = load_image(r'assets\images\buttons\button.png', (150, 50))
-        BUTTONIMAGE1 = load_image(r'assets\images\buttons\button.png', (250, 100))
+        BUTTONIMAGE = load_image(r'assets/images/buttons/button.png', (150, 50))
+        BUTTONIMAGE1 = load_image(r'assets/images/buttons/button.png', (250, 100))
         self.button = [
             Button(BUTTONIMAGE, (150, 50), (25, SCREENHEIGHT - self.size.cellSizeX), 'Randomize'),
             Button(BUTTONIMAGE, (150, 50), (200, SCREENHEIGHT - self.size.cellSizeX), 'Reset'),
@@ -296,6 +304,14 @@ class BattleShips_TypeOne(BattleShips):
         return validGame
 
     def start_game(self, window, level):
+        playmusic = None
+        if self.music == 0:
+            playmusic = PLAYINGSOUND
+        elif self.music == 1:
+            playmusic = PLAYINGSOUND1
+        elif self.music == 2:
+            playmusic = PLAYINGSOUND2
+        playmusic.play(-1)
         if self.status:
             self.create_grid()
             self.create_fleet()
@@ -345,6 +361,7 @@ class BattleShips_TypeOne(BattleShips):
                                 elif button.name == 'Back':
                                     self.playerchoice = 0
                                     BUTTONSOUND.play()
+                                    playmusic.stop()
                                     flag = False
                                 elif button.name == 'Radar Scan' and button.active:
                                     self.scanner = True
@@ -384,24 +401,38 @@ class BattleShips_TypeOne(BattleShips):
         pygame.display.update()
 
     def deployment_screen(self, window):
-        bggame = load_image(r'assets/images/background/gamebg.png', (SCREENWIDTH, SCREENHEIGHT))
-        window.blit(bggame, (0, 0))
-        window.blit(self.pgamegriding, (self.size.cellSizeX // 2, self.size.cellSizeX // 2))
-        window.blit(self.cgamegriding,
-                    (self.cGameGrid[0][0][0] - self.size.cellSizeY, self.cGameGrid[0][0][1] - self.size.cellSizeY))
-
         textstatus = ""
         if self.deployment:
-            textstatus = " DEPLOYING (" + str(self.num_ship_deployed(self.pFleet)) + "/" + str(
-                self.num_ship_available(self.pFleet)) + ") "
+            textstatus = "  DEPLOYING (" + str(self.num_ship_deployed(self.pFleet)) + "/" + str(
+                self.num_ship_available(self.pFleet)) + ")   "
         else:
             textstatus = " PLAYING "
-        textstatus = get_font(50).render(textstatus, True, "Black")
+
+        if not self.graphic:
+            bggame = load_image(r'assets/images/background/Black.png', (SCREENWIDTH, SCREENHEIGHT))
+            window.blit(bggame, (0, 0))
+            self.show_grid_onscreen(window)
+            textstatus = get_font(39).render(textstatus, True, "White")
+
+        elif self.graphic:
+            bggame = load_image(r'assets/images/background/gamebg.png', (SCREENWIDTH, SCREENHEIGHT))
+            window.blit(bggame, (0, 0))
+            window.blit(self.pgamegriding, (self.size.cellSizeX // 2, self.size.cellSizeX // 2))
+            window.blit(self.cgamegriding,
+                        (self.cGameGrid[0][0][0] - self.size.cellSizeY, self.cGameGrid[0][0][1] - self.size.cellSizeY))
+            textstatus = get_font(39).render(textstatus, True, "Black")
+
         testrect = textstatus.get_rect(center=(SCREENWIDTH // 2, SCREENHEIGHT // 2 + 100))
+
+        sign = pygame.image.load(r'assets\images\buttons\sign.png')
+        sign_center = (testrect.centerx, testrect.centery)
+        sign_top_left = (sign_center[0] - sign.get_width() // 4 + 25, sign_center[1] - sign.get_height() // 2 + 25)
+        resized_sign = pygame.transform.scale(sign, (385, 200))
+
+        window.blit(resized_sign, sign_top_left)
         window.blit(textstatus, testrect)
 
         #  Draws the player and computer grids to the screen
-        self.show_grid_onscreen(window)
         #  Draw ships to screen
         self.show_ship_onscreen(window, self.pFleet, self.pGameGrid, True)
         self.show_ship_onscreen(window, self.cFleet, self.cGameGrid, True)
@@ -436,7 +467,7 @@ class BattleShips_TypeOne(BattleShips):
             testrect = textcomputer.get_rect(center=(SCREENWIDTH // 2, SCREENHEIGHT // 6))
             window.blit(textcomputer, testrect)
 
-            BUTTONIMAGE = load_image(r'assets\images\buttons\button.png', (300, 100))
+            BUTTONIMAGE = load_image(r'assets/images/buttons/button.png', (300, 100))
 
             self.show_grid_onscreen(window)
             #  Draw ships to screen

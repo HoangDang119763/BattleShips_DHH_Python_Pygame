@@ -1,7 +1,7 @@
 from Utilities.service import SHOTSOUND, HITSOUND, MISSSOUND
 import pygame
 import random
-from Utilities.token import Tokens
+from Utilities.gametoken import Tokens
 
 
 class EasyComputer:
