@@ -11,6 +11,20 @@ from Machine.easy_computer import EasyComputer
 from Machine.hard_computer import HardComputer
 from GameSetting import battleship_10x10, battleship_20x20
 
+pygame.init()
+
+
+def show_token_onscreen(window, token):
+    for tokens in token:
+        tokens.draw(window)
+
+
+def num_ship_available(fleet):
+    num = 0
+    for i in fleet:
+        num += 1
+    return num
+
 
 class BattleShips_TypeOne(BattleShips):
     def __init__(self, numrows, numcolumns, graphic, numfleet, music):
@@ -132,10 +146,6 @@ class BattleShips_TypeOne(BattleShips):
             else:
                 buttonx.active = False
 
-    def show_token_onscreen(self, window, token):
-        for tokens in token:
-            tokens.draw(window)
-
     def show_radar_scanner_onscreen(self, window):
         radarScan = self.display_radar_scanner(self.radargridimages, self.indnum, self.scanner)
         if not radarScan:
@@ -187,12 +197,6 @@ class BattleShips_TypeOne(BattleShips):
     def sort_fleet(self, ship, shipList):
         shipList.remove(ship)
         shipList.append(ship)
-
-    def num_ship_available(self, fleet):
-        num = 0
-        for i in fleet:
-            num += 1
-        return num
 
     def num_ship_deployed(self, fleet):
         num = 0
@@ -352,7 +356,7 @@ class BattleShips_TypeOne(BattleShips):
                         for button in self.button:
                             if button.rect.collidepoint(pygame.mouse.get_pos()):
                                 if button.name == 'Deploy' and button.active and self.num_ship_deployed(
-                                        self.pFleet) == self.num_ship_available(self.pFleet):
+                                        self.pFleet) == num_ship_available(self.pFleet):
                                     self.deployment = False
                                     BUTTONSOUND.play()
                                 elif button.name == 'Redeploy' and button.active:
@@ -404,7 +408,7 @@ class BattleShips_TypeOne(BattleShips):
         textstatus = ""
         if self.deployment:
             textstatus = "  DEPLOYING (" + str(self.num_ship_deployed(self.pFleet)) + "/" + str(
-                self.num_ship_available(self.pFleet)) + ")   "
+                num_ship_available(self.pFleet)) + ")   "
         else:
             textstatus = " PLAYING "
 
@@ -440,7 +444,7 @@ class BattleShips_TypeOne(BattleShips):
         self.computer.draw(window, self)
         self.show_radar_scanner_onscreen(window)
         self.show_radar_blip_onscreen(window)
-        self.show_token_onscreen(window, self.tokens)
+        show_token_onscreen(window, self.tokens)
         self.update_pgame_logic(self.pGameGrid, self.pFleet)
         self.update_cgame_logic(self.cGameGrid, self.cFleet)
 
@@ -473,7 +477,7 @@ class BattleShips_TypeOne(BattleShips):
             #  Draw ships to screen
             self.show_ship_onscreen(window, self.pFleet, self.pGameGrid, True)
             self.show_ship_onscreen(window, self.cFleet, self.cGameGrid, True)
-            self.show_token_onscreen(window, self.tokens)
+            show_token_onscreen(window, self.tokens)
             button = [
                 Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2 - 150),
                        'Play Again'),
