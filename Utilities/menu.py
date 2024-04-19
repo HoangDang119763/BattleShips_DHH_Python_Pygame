@@ -212,7 +212,7 @@ class Menu:
             style_fancy_arrow_color=(0, 0, 0),
             style_fancy_arrow_margin=(10, 10, 0),
             background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png'))
-        ).translate(0, 80).set_max_width(600)
+        ).translate(50, 80).set_max_width(600)
 
         levels = [('EASY', 1),
                   ('HARD', 2)]
@@ -231,7 +231,7 @@ class Menu:
             style_fancy_arrow_color=(0, 0, 0),
             style_fancy_arrow_margin=(10, 10, 0),
             background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png'))
-        ).translate(0, 110).set_max_width(600)
+        ).translate(50, 110).set_max_width(600)
 
         fleets = [('0', 0),
                   ('1', 1),
@@ -254,7 +254,7 @@ class Menu:
             style_fancy_arrow_color=(0, 0, 0),
             style_fancy_arrow_margin=(10, 10, 0),
             background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png'))
-        ).translate(0, 140).set_max_width(600)
+        ).translate(50, 140).set_max_width(600)
 
         self.menu_custom.add.button('GAME CUSTOM', self.start_game_custom,
                                     font_color=(255, 255, 255),
@@ -300,7 +300,7 @@ class Menu:
                                            cursor=pygame_menu.locals.CURSOR_HAND,
                                            background_color=(
                                                pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png'))
-                                           ).translate(0, 80).set_onchange(self.toggle_music)
+                                           ).translate(50, 80).set_onchange(self.toggle_music)
 
         self.menu_option.add.toggle_switch('Graphic:', self.graphic,
                                            width=340,
@@ -318,7 +318,7 @@ class Menu:
                                            switch_border_width=1,
                                            cursor=pygame_menu.locals.CURSOR_HAND,
                                            background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png')),
-                                           ).translate(0, 110).set_onchange(self.toggle_graphic)
+                                           ).translate(50, 110).set_onchange(self.toggle_graphic)
 
         fleets = [('0', 0),
                   ('1', 1),
@@ -339,7 +339,7 @@ class Menu:
             style_fancy_arrow_margin=(10, 10, 0),
             background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png')),
             background_width=600
-        ).translate(0, 140)
+        ).translate(50, 140)
 
         self.menu_option.add.button('QUIT', self.back,
                                     font_color=(255, 255, 255),
