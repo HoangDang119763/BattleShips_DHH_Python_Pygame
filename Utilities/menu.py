@@ -100,7 +100,7 @@ class Menu:
                             padding=(30, 60),
                             ).translate(0, 50).set_background_color(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\sign.png'))
 
-        self.menu.add.button('PLAY', self.menu_play,
+        self.menu.add.button('PLAY', self.play,
                              font_color=(255, 255, 255),
                              font_name=get_font(70),
                              align=pygame_menu.locals.ALIGN_CENTER,
@@ -109,7 +109,7 @@ class Menu:
                              background_color=pygame_menu.baseimage.BaseImage(r'assets\images\buttons\button.png'),
                              ).translate(0, 80).set_max_width(280)
 
-        self.menu.add.button('CUSTOM', action=self.menu_custom,
+        self.menu.add.button('CUSTOM', action=self.custom,
                              font_color=(255, 255, 255),
                              font_name=get_font(70),
                              align=pygame_menu.locals.ALIGN_CENTER,
@@ -118,7 +118,7 @@ class Menu:
                              background_color=pygame_menu.baseimage.BaseImage(r'assets\images\buttons\button.png')
                              ).translate(0, 110).set_max_width(280)
 
-        self.menu.add.button('OPTION', action=self.menu_option,
+        self.menu.add.button('OPTION', action=self.option,
                              font_color=(255, 255, 255),
                              font_name=get_font(70),
                              align=pygame_menu.locals.ALIGN_CENTER,
@@ -179,7 +179,7 @@ class Menu:
                                   background_color=pygame_menu.baseimage.BaseImage(r'assets\images\buttons\button.png')
                                   ).translate(0, 170).set_max_width(600)
 
-        self.menu_play.add.button('QUIT', pygame_menu.events.BACK,
+        self.menu_play.add.button('QUIT', self.back,
                                   font_color=(255, 255, 255),
                                   font_name=get_font(60),
                                   align=pygame_menu.locals.ALIGN_CENTER,
@@ -266,7 +266,7 @@ class Menu:
                                         r'assets\images\buttons\button.png')
                                     ).translate(0, 170).set_max_width(300)
 
-        self.menu_custom.add.button('QUIT', pygame_menu.events.BACK,
+        self.menu_custom.add.button('QUIT', self.back,
                                     font_color=(255, 255, 255),
                                     font_name=get_font(40),
                                     align=pygame_menu.locals.ALIGN_CENTER,
@@ -292,7 +292,7 @@ class Menu:
                                            align=pygame_menu.locals.ALIGN_CENTER,
                                            state_text=('OFF', 'ON'),
                                            slider_color=(64, 64, 64),
-                                           state_color=((255, 0, 00), (0, 255, 33)),
+                                           state_color=((255, 0, 0), (0, 255, 33)),
                                            switch_margin=(40, 0),
                                            state_text_font_color=((0, 0, 0), (255, 255, 255)),
                                            switch_height=0.7,
@@ -336,12 +336,12 @@ class Menu:
             style_fancy_bgcolor=pygame_menu.themes.TRANSPARENT_COLOR,
             style_fancy_bordercolor=pygame_menu.themes.TRANSPARENT_COLOR,
             style_fancy_arrow_color=(0, 0, 0),
-            style_fancy_arrow_margin=(40, 20, 0),
+            style_fancy_arrow_margin=(10, 10, 0),
             background_color=(pygame_menu.baseimage.BaseImage(r'assets\images\buttons\setting.png')),
             background_width=600
         ).translate(0, 140)
 
-        self.menu_option.add.button('QUIT', pygame_menu.events.BACK,
+        self.menu_option.add.button('QUIT', self.back,
                                     font_color=(255, 255, 255),
                                     font_name=get_font(80),
                                     align=pygame_menu.locals.ALIGN_CENTER,
@@ -357,7 +357,23 @@ class Menu:
     def quit(self):
         BUTTONSOUND.play()
         self.menu.disable()
-        pygame_menu.events.PYGAME_QUIT
+        pygame.quit()
+
+    def play(self):
+        BUTTONSOUND.play()
+        self.menu_play.mainloop(self.screen)
+
+    def custom(self):
+        BUTTONSOUND.play()
+        self.menu_custom.mainloop(self.screen)
+
+    def option(self):
+        BUTTONSOUND.play()
+        self.menu_option.mainloop(self.screen)
+
+    def back(self):
+        BUTTONSOUND.play()
+        self.menu.mainloop(self.screen)
 
     def loop(self):
         while True:

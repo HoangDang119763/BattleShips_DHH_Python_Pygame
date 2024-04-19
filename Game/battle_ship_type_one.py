@@ -211,9 +211,7 @@ class BattleShips_TypeOne(BattleShips):
         self.button = [
             Button(BUTTONIMAGE, (150, 50), (25, SCREENHEIGHT - self.size.cellSizeX), 'Randomize'),
             Button(BUTTONIMAGE, (150, 50), (200, SCREENHEIGHT - self.size.cellSizeX), 'Reset'),
-            Button(BUTTONIMAGE, (150, 50), (375, SCREENHEIGHT - self.size.cellSizeX), 'Deploy'),
-            Button(BUTTONIMAGE1, (250, 100), (900, SCREENHEIGHT // 2 - 150), 'Easy Computer'),
-            Button(BUTTONIMAGE1, (250, 100), (900, SCREENHEIGHT // 2 + 150), 'Hard Computer')
+            Button(BUTTONIMAGE, (150, 50), (375, SCREENHEIGHT - self.size.cellSizeX), 'Deploy')
         ]
 
     def pick_random_ship_location(self, gameLogic):
