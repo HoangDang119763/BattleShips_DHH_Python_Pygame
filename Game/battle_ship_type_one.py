@@ -14,11 +14,6 @@ from GameSetting import battleship_10x10, battleship_20x20
 pygame.init()
 
 
-def show_token_onscreen(window, token):
-    for tokens in token:
-        tokens.draw(window)
-
-
 def num_ship_available(fleet):
     num = 0
     for i in fleet:
@@ -146,6 +141,10 @@ class BattleShips_TypeOne(BattleShips):
             else:
                 buttonx.active = False
 
+    def show_token_onscreen(self, window, token):
+        for tokens in token:
+            tokens.draw(window)
+
     def show_radar_scanner_onscreen(self, window):
         radarScan = self.display_radar_scanner(self.radargridimages, self.indnum, self.scanner)
         if not radarScan:
@@ -209,9 +208,9 @@ class BattleShips_TypeOne(BattleShips):
         BUTTONIMAGE = load_image(r'assets/images/buttons/button.png', (150, 50))
         BUTTONIMAGE1 = load_image(r'assets/images/buttons/button.png', (250, 100))
         self.button = [
-            Button(BUTTONIMAGE, (150, 50), (25, SCREENHEIGHT - self.size.cellSizeX), 'Randomize'),
-            Button(BUTTONIMAGE, (150, 50), (200, SCREENHEIGHT - self.size.cellSizeX), 'Reset'),
-            Button(BUTTONIMAGE, (150, 50), (375, SCREENHEIGHT - self.size.cellSizeX), 'Deploy')
+            Button(BUTTONIMAGE, (150, 50), (25, SCREENHEIGHT - self.size.cellSizeX), 'Randomize', self.graphic),
+            Button(BUTTONIMAGE, (150, 50), (200, SCREENHEIGHT - self.size.cellSizeX), 'Reset', self.graphic),
+            Button(BUTTONIMAGE, (150, 50), (375, SCREENHEIGHT - self.size.cellSizeX), 'Deploy', self.graphic)
         ]
 
     def pick_random_ship_location(self, gameLogic):
@@ -333,6 +332,7 @@ class BattleShips_TypeOne(BattleShips):
         while flag:
             if (not self.status or self.check_for_winners(self.cGameLogic) or self.check_for_winners(
                     self.pGameLogic)) and not self.deployment:
+                playmusic.stop()
                 break
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -431,18 +431,19 @@ class BattleShips_TypeOne(BattleShips):
         sign_top_left = (sign_center[0] - sign.get_width() // 4 + 25, sign_center[1] - sign.get_height() // 2 + 25)
         resized_sign = pygame.transform.scale(sign, (385, 200))
 
-        window.blit(resized_sign, sign_top_left)
+        if self.graphic:
+            window.blit(resized_sign, sign_top_left)
         window.blit(textstatus, testrect)
 
         #  Draws the player and computer grids to the screen
         #  Draw ships to screen
         self.show_ship_onscreen(window, self.pFleet, self.pGameGrid, True)
-        self.show_ship_onscreen(window, self.cFleet, self.cGameGrid, True)
+        self.show_ship_onscreen(window, self.cFleet, self.cGameGrid, False)
         self.show_button_onscreen(window, self.button)
         self.computer.draw(window, self)
         self.show_radar_scanner_onscreen(window)
         self.show_radar_blip_onscreen(window)
-        show_token_onscreen(window, self.tokens)
+        self.show_token_onscreen(window, self.tokens)
         self.update_pgame_logic(self.pGameGrid, self.pFleet)
         self.update_cgame_logic(self.cGameGrid, self.cFleet)
 
@@ -453,21 +454,38 @@ class BattleShips_TypeOne(BattleShips):
         else:
             PLAYERWINSOUND.play()
         while flag:
-            bgendscreen = pygame.image.load(r'assets/images/background/Carrier.jpg')
-            bgendscreen = pygame.transform.scale(bgendscreen, (SCREENWIDTH, SCREENHEIGHT))
-            window.blit(bgendscreen, (0, 0))
-
-            ""
-
+            textcomputer = ""
             """Player win"""
             if self.check_for_winners(self.cGameLogic):
                 result = " PLAYER WIN "
             else:
                 result = " COMPUTER WIN"
 
-            textcomputer = get_font(100).render(result, True, "Black")
+            if not self.graphic:
+                bgendscreen = pygame.image.load(r'assets/images/background/Black.png')
+                bgendscreen = pygame.transform.scale(bgendscreen, (SCREENWIDTH, SCREENHEIGHT))
+                window.blit(bgendscreen, (0, 0))
+                textcomputer = get_font(100).render(result, True, "White")
+            else:
+                bgendscreen = pygame.image.load(r'assets/images/background/Carrier.jpg')
+                bgendscreen = pygame.transform.scale(bgendscreen, (SCREENWIDTH, SCREENHEIGHT))
+                window.blit(bgendscreen, (0, 0))
+                textcomputer = get_font(100).render(result, True, "Black")
+
             testrect = textcomputer.get_rect(center=(SCREENWIDTH // 2, SCREENHEIGHT // 6))
-            window.blit(textcomputer, testrect)
+
+            sign = pygame.image.load(r'assets\images\buttons\sign.png')
+            sign_center = (testrect.centerx, testrect.centery)
+            if self.check_for_winners(self.cGameLogic):
+                sign_top_left = (sign_center[0] - sign.get_width() // 4 - 120, sign_center[1] - sign.get_height() // 2 + 25)
+                resized_sign = pygame.transform.scale(sign, (685, 200))
+            else:
+                sign_top_left = (
+                sign_center[0] - sign.get_width() // 4 - 237, sign_center[1] - sign.get_height() // 2 + 25)
+                resized_sign = pygame.transform.scale(sign, (950, 200))
+
+            if self.graphic:
+                window.blit(resized_sign, sign_top_left)
 
             BUTTONIMAGE = load_image(r'assets/images/buttons/button.png', (300, 100))
 
@@ -475,12 +493,13 @@ class BattleShips_TypeOne(BattleShips):
             #  Draw ships to screen
             self.show_ship_onscreen(window, self.pFleet, self.pGameGrid, True)
             self.show_ship_onscreen(window, self.cFleet, self.cGameGrid, True)
-            show_token_onscreen(window, self.tokens)
+            self.show_token_onscreen(window, self.tokens)
+            window.blit(textcomputer, testrect)
             button = [
-                Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2 - 150),
-                       'Play Again'),
-                Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT - 100) // 2),
-                       'Quit'),
+                Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT) // 2 - 120),
+                       'Play Again', self.graphic),
+                Button(BUTTONIMAGE, (300, 100), ((SCREENWIDTH - 300) // 2, (SCREENHEIGHT) // 2),
+                       'Quit', self.graphic),
             ]
 
             for buttonx in button:

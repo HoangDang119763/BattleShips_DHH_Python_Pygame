@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="03e89650-4af7-45d9-9283-25eefd204e09" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utilities/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game/battle_ship_type_one.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game/battle_ship_type_one.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Machine/easy_computer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Machine/easy_computer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Utilities/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utilities/service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +18,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -25,15 +31,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.menu.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.battle_ship_type_one.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.menu.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/Dang Huy Hoang/OneDrive/Máy tính/StudySGU/PYTHON/3122560020_DangHuyHoang_Nhom19",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

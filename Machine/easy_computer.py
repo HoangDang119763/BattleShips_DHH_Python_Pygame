@@ -12,7 +12,7 @@ class EasyComputer:
 
     def computerStatus(self, msg):
         image = pygame.font.SysFont('Stencil', 22)
-        message = image.render(msg, 1, (0, 0, 0))
+        message = image.render(msg, 1, (255, 0, 0))
         return message
 
     def makeAttack(self, gamelogic, game, turntimer, numSize):

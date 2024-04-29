@@ -2,11 +2,16 @@ import pygame
 
 
 class Button:
-    def __init__(self, image, size, pos, msg):
+    def __init__(self, image, size, pos, msg, graphic):
         self.name = msg
         self.image = image
-        self.imageLarger = self.image
-        self.imageLarger = pygame.transform.scale(self.imageLarger, (size[0] + 6, size[1] + 6))
+        self.imageSelect = pygame.image.load(r'assets\images\buttons\buttonselect.png').convert_alpha()
+        self.imageSelect = pygame.transform.scale(self.imageSelect, size)
+        self.imageGraphicOff = pygame.image.load(r'assets\images\buttons\buttongraphicoff.png').convert_alpha()
+        self.imageGraphicOff = pygame.transform.scale(self.imageGraphicOff, size)
+        self.imageGraphicOffSelect = pygame.image.load(r'assets\images\buttons\buttongraphicoffselect.png').convert_alpha()
+        self.imageGraphicOffSelect = pygame.transform.scale(self.imageGraphicOffSelect, size)
+        self.graphic = graphic
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.radarUsed = 0
@@ -24,9 +29,15 @@ class Button:
     def focusOnButton(self, window):
         if self.active:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
-                window.blit(self.imageLarger, (self.rect[0] - 5, self.rect[1] - 5, self.rect[2], self.rect[3]))
+                if self.graphic:
+                    window.blit(self.imageSelect, self.rect)
+                else:
+                    window.blit(self.imageGraphicOffSelect, self.rect)
             else:
-                window.blit(self.image, self.rect)
+                if self.graphic:
+                    window.blit(self.image, self.rect)
+                else:
+                    window.blit(self.imageGraphicOff, self.rect)
 
     def action_on_press(self, game):
         if self.active:
@@ -92,6 +103,9 @@ class Button:
 
     def draw(self, window, deployment):
         self.updateButtons(deployment)
+        if self.graphic:
+            window.blit(self.image, self.rect)
+        else:
+            window.blit(self.imageGraphicOff, self.rect)
         self.focusOnButton(window)
-        window.blit(self.image, self.rect)
         window.blit(self.msg, self.msgRect)
